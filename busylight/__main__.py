@@ -18,6 +18,7 @@ from .manager import LightManager
 from . import __version__
 
 from .lights import Light
+from .mqtt import BusylightMQTT
 
 cli = typer.Typer()
 
@@ -362,6 +363,30 @@ def generate_udev_rules(
 
     print("\n".join(about + rules), file=output)
 
+
+@cli.command(name="mqtt")
+def run_mqtt_handler(
+    ctx: typer.Context,
+    host: str = typer.Option(
+        "127.0.0.1",
+        "--mqtt-host",
+        help="Hostname of MQTT server to connect to.",
+    ),
+    port: int = typer.Option(
+        1883,
+        "--mqtt-port",
+        help="Port of MQTT server to connect to.",
+    ),
+    mqtt_topic: str = typer.Option(
+        "busylight",
+        "--mqtt-topic",
+        help="MQTT topic to subscribe to.",
+    ),
+) -> None:
+    """Run mqtt handler."""
+    logger.info("starting mqtt handler")
+    busylightmqtt = BusylightMQTT(manager, ctx, host, port, mqtt_topic)
+    busylightmqtt.run()
 
 @webcli.command()
 def serve_http_api(

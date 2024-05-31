@@ -14,3 +14,4 @@ htmlcov
 .python-version
 
 .vscode/
+/.idea
